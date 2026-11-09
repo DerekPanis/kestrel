@@ -73,6 +73,9 @@ jobs:
           vcpkgGitCommitId: 42bb0d9e8d4cf33485afb9ee2229150f79f61a1f
           vcpkgJsonGlob: native/vcpkg.json
           runVcpkgInstall: true
+          runVcpkgFormatString: '["install", "--recurse", "--clean-after-build", "--x-install-root", "$[env.VCPKG_INSTALLED_DIR]", "--triplet", "$[env.VCPKG_DEFAULT_TRIPLET]", "--overlay-triplets", "${{ github.workspace }}/native/triplets"]'
+        env:
+          VCPKG_DEFAULT_TRIPLET: ${{ env.triplet }}
       - name: Patch gf-complete for MSVC (same patch chiaki-ng uses)
         working-directory: vendor/chiaki-ng
         run: git apply --ignore-whitespace --verbose --directory=third-party/gf-complete/ scripts/windows-vc/gf-complete.patch
@@ -83,6 +86,8 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE:STRING="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
             -DVCPKG_MANIFEST_DIR="${{ github.workspace }}\native" `
             -DVCPKG_TARGET_TRIPLET=${{ env.triplet }} `
+            -DVCPKG_OVERLAY_TRIPLETS="${{ github.workspace }}\native\triplets" `
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 `
             -DPYTHON_EXECUTABLE="$((Get-Command python).Source)" `
             -Wno-dev
           cmake --build build-native --target kbridge
