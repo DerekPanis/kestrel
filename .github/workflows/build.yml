@@ -46,6 +46,7 @@ jobs:
       CC: clang-cl.exe
       CXX: clang-cl.exe
       triplet: x64-windows
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}\vcpkg-bincache,readwrite
     defaults:
       run:
         shell: powershell
@@ -67,6 +68,14 @@ jobs:
           python-version: "3.12"
       - name: Python packages for nanopb
         run: python -m pip install --upgrade protobuf grpcio-tools
+      - name: Prepare vcpkg binary cache
+        run: New-Item -ItemType Directory -Force "${{ github.workspace }}\vcpkg-bincache" | Out-Null
+      - name: Restore vcpkg binary cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}\vcpkg-bincache
+          key: vcpkg-bin-${{ env.triplet }}-${{ hashFiles('native/vcpkg.json', 'native/triplets/**') }}
+          restore-keys: vcpkg-bin-${{ env.triplet }}-
       - name: vcpkg
         uses: lukka/run-vcpkg@v11
         with:

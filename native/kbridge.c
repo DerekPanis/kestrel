@@ -20,6 +20,9 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#ifndef SIO_UDP_CONNRESET
+#define SIO_UDP_CONNRESET _WSAIOW(IOC_VENDOR, 12)
+#endif
 #else
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -90,6 +93,24 @@ KB_API void kb_struct_sizes(KbStructSizes *out)
 }
 
 /* ---------------------------------------------------------------- Discovery */
+
+/*
+ * On Windows, an ICMP "port unreachable" for an earlier datagram makes the
+ * next recvfrom() on that UDP socket fail with WSAECONNRESET. libchiaki's
+ * discovery thread treats any recv error as fatal and exits, so a single
+ * unanswered PS4 probe (port 987) to a unicast address would kill discovery
+ * before the PS5's reply on 9302 is read. Turn that behaviour off.
+ */
+static void disable_udp_connreset(chiaki_socket_t sock)
+{
+#ifdef _WIN32
+	BOOL report = FALSE;
+	DWORD returned = 0;
+	WSAIoctl(sock, SIO_UDP_CONNRESET, &report, sizeof(report), NULL, 0, &returned, NULL, NULL);
+#else
+	(void)sock;
+#endif
+}
 
 #define KB_DISCOVERY_HOSTS_MAX 16
 #define KB_DISCOVERY_DROP_PINGS 3
@@ -188,6 +209,9 @@ KB_API KbDiscovery *kb_discovery_start(const char *manual_host, uint32_t ping_ms
 		set_err(err_out, err);
 		return NULL;
 	}
+	/* The service's first ping happens ping_initial_ms after init, so this
+	 * always runs before anything is sent. */
+	disable_udp_connreset(d->service.discovery.socket);
 	set_err(err_out, CHIAKI_ERR_SUCCESS);
 	return d;
 }
