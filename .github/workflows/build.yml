@@ -87,7 +87,7 @@ jobs:
             -DVCPKG_MANIFEST_DIR="${{ github.workspace }}\native" `
             -DVCPKG_TARGET_TRIPLET=${{ env.triplet }} `
             -DVCPKG_OVERLAY_TRIPLETS="${{ github.workspace }}\native\triplets" `
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 `
+            "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" `
             -DPYTHON_EXECUTABLE="$((Get-Command python).Source)" `
             -Wno-dev
           cmake --build build-native --target kbridge
