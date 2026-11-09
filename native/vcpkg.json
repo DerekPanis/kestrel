@@ -1,0 +1,15 @@
+{
+  "name": "kestrel-native",
+  "version": "0.1.0",
+  "description": "Native dependencies of libchiaki for the kbridge DLL",
+  "builtin-baseline": "42bb0d9e8d4cf33485afb9ee2229150f79f61a1f",
+  "dependencies": [
+    "pkgconf",
+    "protobuf",
+    "openssl",
+    "json-c",
+    "libevent",
+    "miniupnpc",
+    "opus"
+  ]
+}

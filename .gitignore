@@ -1,0 +1,7 @@
+/target
+/build-native
+/vcpkg
+/vcpkg_installed
+*.h264
+*.h265
+*.hevc

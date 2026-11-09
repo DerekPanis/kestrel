@@ -1,0 +1,26 @@
+[package]
+name = "kestrel-core"
+description = "Remote Play engine for Kestrel: safe Rust over chiaki-ng's libchiaki"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+links = "kbridge"
+build = "build.rs"
+
+[dependencies]
+base64 = "0.23"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+parking_lot = "0.13"
+directories = "6"
+
+
+[build-dependencies]
+cmake = "0.1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_System_Memory"] }
