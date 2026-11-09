@@ -7,9 +7,11 @@ project has been tested against real PS5 hardware yet.
 | Area | Status | Evidence |
 |---|---|---|
 | libchiaki builds as part of kbridge (Linux) | ✅ tested here | `cmake --build` |
-| libchiaki + kbridge build on Windows x64 (clang-cl, vcpkg) | ⏳ CI written, not yet run | `.github/workflows/build.yml` |
+| libchiaki + kbridge build on Windows x64 (clang-cl, vcpkg) | ✅ tested (CI) | Windows job, run 42674968167 |
+| All 25 Rust tests pass on Windows | ✅ tested (CI) | incl. loopback discovery + session |
+| Packaged exe starts and finds all DLLs | ✅ tested (CI) | `kestrel-probe --version` in Package step |
 | FFI struct layouts match C | ✅ tested | `ffi::tests::layouts_match_c` |
-| Discovery: probe format + PS5 reply parsing | ✅ tested (loopback responder) | `tests/loopback.rs` |
+| Discovery: probe format + PS5 reply parsing | ✅ tested (loopback, Linux + Windows) | `tests/loopback.rs`; caught and fixed the Windows WSAECONNRESET bug |
 | Discovery of a real PS5 (broadcast + unicast) | 🔶 needs PS5 | Stage 1 test step 1 |
 | Pairing request is sent; failure reported cleanly | ✅ tested (refused on loopback) | probe smoke run |
 | Pairing with a real PS5 (Account ID + PIN) | 🔶 needs PS5 | step 2 |
@@ -25,7 +27,7 @@ project has been tested against real PS5 hardware yet.
 | DualSense haptics playback | ❌ not implemented (Stage 4) | |
 | Stats math (FPS/Mbps rates, quality class) | ✅ tested | `stats::tests` |
 | Secure storage round-trip, owner-only file | ✅ tested (Linux) | `store::tests` |
-| DPAPI encryption | ⏳ runs in Windows CI tests | `secure::tests::round_trip` |
+| DPAPI encryption | ✅ tested (Windows CI) | `secure::tests::round_trip` |
 | Desktop UI, WebCodecs rendering | ❌ Stage 2–3 | |
 | Internet (remote) play | ❌ later stage | |
 | Installer | ❌ Stage 5 | |
